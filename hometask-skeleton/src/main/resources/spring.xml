@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+ 		http://www.springframework.org/schema/beans
+ 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+ 		http://www.springframework.org/schema/util
+ 		http://www.springframework.org/schema/util/spring-util-3.2.xsd
+ 		http://www.springframework.org/schema/context
+ 		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+<!-- 	<import resource="dao.xml"/> -->
+	
+	
+<!-- 	<bean id="birthdayDiscountStrategy" class="ua.epam.spring.hometask.manager.BirthdayDiscountStrategy"/> -->
+<!-- 	<bean id="tenTicketDiscountStrategy" class="ua.epam.spring.hometask.manager.TenTicketDiscountStrategy"/> -->
+	
+<!-- 	<bean id="userService" class="ua.epam.spring.hometask.service.impl.UserServiceImpl"> -->
+<!-- 		<property name="userDao" ref="userDao" /> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="eventService" class="ua.epam.spring.hometask.service.impl.EventServiceImpl"> -->
+<!-- 		<property name="eventDao" ref="eventDao" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="bookingService" class="ua.epam.spring.hometask.service.impl.BookingServiceImpl"> -->
+<!-- 		<property name="ticketDao" ref="ticketDao" /> -->
+<!-- 		<property name="userDao" ref="userDao" /> -->
+<!-- 		<property name="discountService" ref="discountService" /> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="discountService" class="ua.epam.spring.hometask.service.impl.DiscountServiceImpl" > -->
+<!-- 		<constructor-arg> -->
+<!-- 			<list> -->
+<!-- 				<ref bean = "birthdayDiscountStrategy"/> -->
+<!-- 				<ref bean = "tenTicketDiscountStrategy"/> -->
+<!-- 			</list> -->
+<!-- 		</constructor-arg> -->
+<!-- 	</bean> -->
+
+<!-- 	<bean id="auditoriumService" class="ua.epam.spring.hometask.service.impl.AuditoriumServiceImpl"> -->
+<!--         <constructor-arg> -->
+<!--             <list> -->
+<!--                 <ref bean="auditorium1"/> -->
+<!--                 <ref bean="auditorium2"/> -->
+<!--                 <ref bean="auditorium3"/> -->
+<!--                 <ref bean="auditorium4"/> -->
+<!--             </list> -->
+<!--         </constructor-arg> -->
+<!--     </bean> -->
+	
+<!-- 	<bean id="placeholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> -->
+<!--         <property name="locations"> -->
+<!--             <list> -->
+<!--                 <value>classpath:auditorium.properties</value> -->
+<!--             </list> -->
+<!--         </property> -->
+<!--     </bean> -->
+	
+<!-- 	<bean id="auditorium1" class="ua.epam.spring.hometask.domain.Auditorium"> -->
+<!-- 		<property name = "name" value = "${auditorium.1.name}"/> -->
+<!-- 		<property name = "numberOfSeats" value = "${auditorium.1.numberOfSeats}"/> -->
+<!-- 		<property name = "vipSeats" value = "#{'${auditorium.1.vipSeats}'.split(',')}"/> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="auditorium2" class="ua.epam.spring.hometask.domain.Auditorium"> -->
+<!-- 		<property name = "name" value = "${auditorium.2.name}"/> -->
+<!-- 		<property name = "numberOfSeats" value = "${auditorium.2.numberOfSeats}"/> -->
+<!-- 		<property name = "vipSeats" value = "#{'${auditorium.2.vipSeats}'.split(',')}"/> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="auditorium3" class="ua.epam.spring.hometask.domain.Auditorium"> -->
+<!-- 		<property name = "name" value = "${auditorium.3.name}"/> -->
+<!-- 		<property name = "numberOfSeats" value = "${auditorium.3.numberOfSeats}"/> -->
+<!-- 		<property name = "vipSeats" value = "#{'${auditorium.3.vipSeats}'.split(',')}"/> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="auditorium4" class="ua.epam.spring.hometask.domain.Auditorium"> -->
+<!-- 		<property name = "name" value = "${auditorium.4.name}"/> -->
+<!-- 		<property name = "numberOfSeats" value = "${auditorium.4.numberOfSeats}"/> -->
+<!-- 		<property name = "vipSeats" value = "#{'${auditorium.4.vipSeats}'.split(',')}"/> -->
+<!-- 	</bean> -->
+	
+<!-- 	<bean id="app" class="ua.epam.spring.application.Application"> -->
+<!-- 		<constructor-arg ref = "userService"/> -->
+<!-- 		<constructor-arg ref = "eventService"/> -->
+<!-- 		<constructor-arg ref = "auditoriumService"/> -->
+<!-- 		<constructor-arg ref = "bookingService"/> -->
+<!-- 	</bean> -->
+
+</beans>
