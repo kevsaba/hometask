@@ -1,39 +1,38 @@
 package ua.epam.spring.hometask.dao;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import ua.epam.spring.hometask.dao.jdbctemplate.UserJDBCTemplate;
 import ua.epam.spring.hometask.domain.User;
 
 @Repository
 public class UserDAO {
 
-	private static Map<Long,User> users= new HashMap<>();
-	private Long idGenerated = 0L;
-	
+	@Autowired
+	UserJDBCTemplate userJDBCTemplate;
+
 	public User save(User user) {
-		user.setId(++idGenerated);
-		users.put(user.getId(), user);
+		userJDBCTemplate.save(user);
 		return user;
 	}
 
 	public void remove(User user) {
-		users.remove(user.getId());
+		userJDBCTemplate.remove(user);
 	}
 
 	public User getById(Long id) {
-		return users.get(id);
+		return userJDBCTemplate.getById(id);
 	}
 
 	public Collection<User> getAll() {
-		return users.values();
+		return userJDBCTemplate.getAll();
 	}
 
 	public User getByEmail(String email) {
-		 return users.values().stream().filter(u->u.getEmail().equals(email)).findFirst().get();
+		return userJDBCTemplate.getByEmail(email);
 	}
 
 }

@@ -1,6 +1,7 @@
 package ua.epam.spring.hometask.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,18 +29,37 @@ private UserDAO userDao;
 private DiscountService discountService;
 
 	@Override
-	public double getTicketsPrice(Event event, LocalDateTime dateTime, User user, Set<Long> seats) {
-		int amountOfVipSeats = event.getAuditoriums().get(dateTime).getVipSeats().stream().filter(vs-> seats.contains(vs)).collect(Collectors.toList()).size();
-		return getTicketPrice(event, dateTime, user, seats.size(), amountOfVipSeats);
+	public double getTicketsPrice(Event event, LocalDateTime dateTime, User user, Set<Long> seats) throws TicketValidationException {
+		return createAndBookTickets(event,dateTime,user,seats);
 	}
 	
+
+	private  double createAndBookTickets(Event event, LocalDateTime dateTime, User user, Set<Long> seats) throws TicketValidationException {
+		Set<Ticket> tickets = new HashSet<>();
+		byte discount  = discountService.getDiscount(user, event, dateTime, seats.size());
+		double eventRaitingPrice= (EventRating.HIGH.equals(event.getRating())?event.getBasePrice()*1.2:event.getBasePrice());
+		boolean discountApplied = false;
+		double totalPrice = 0.0;
+		
+		for(Long seat : seats) {
+		Ticket ticket = new Ticket(user, event, dateTime, seat);
+		ticket.setPrice(calculatePriceOf1Ticket(eventRaitingPrice, event.getAuditoriums().get(dateTime).getVipSeats().contains(seat), !discountApplied? discount:0));
+		updateUser(ticket);
+		if(!discountApplied && discount == 100) {
+			ticket.isLuckyTicket();
+		}
+		tickets.add(ticket);
+		discountApplied = true;
+		totalPrice = totalPrice + ticket.getPrice();
+		}
+		bookTickets(tickets);
+		return totalPrice;
+	}
 
 	@Override
 	public void bookTickets(Set<Ticket> tickets) throws TicketValidationException {
 		if(ValidateTicket.ticketValidation(tickets)) {
-		tickets.stream().forEach(t-> t.setPrice(getIndividualTicketPrice(t.getEvent(), t.getDateTime(),t.getUser(), t.getSeat())));
 		ticketDao.save(tickets);
-		ticketDao.getAllTickets().stream().filter(t->userDao.getAll().contains(t.getUser())).forEach(t->updateUser(t));
 		}
 	}
 
@@ -51,47 +71,18 @@ private DiscountService discountService;
 	
 	private void updateUser(Ticket t) {
 		User user = userDao.getById(t.getUser().getId());
+		if(user!=null) {
 		user.addTicket(t);
 		userDao.save(user);
-	}
-
-
-	public double getIndividualTicketPrice(Event event, LocalDateTime dateTime, User user, Long seat) {
-		int amountOfVipSeats = event.getAuditoriums().get(dateTime).getVipSeats().contains(seat)?1:0;
-		return getTicketPrice(event, dateTime, user, 1, amountOfVipSeats);
-	}
-	
-	private double getTicketPrice(Event event, LocalDateTime dateTime, User user, int amountOfSeats,int amountOfVipSeats) {
-		byte discount  = discountService.getDiscount(user, event, dateTime, amountOfSeats);
-		double eventRaitinPrice= (EventRating.HIGH.equals(event.getRating())?event.getBasePrice()*1.2:event.getBasePrice());
-		return calculatePriceOfTicket(eventRaitinPrice, amountOfSeats, amountOfVipSeats,discount);
-	}
-	
-	public void setTicketDao(TicketDAO ticketDao) {
-		this.ticketDao = ticketDao;
-	}
-
-	public void setUserDao(UserDAO userDao) {
-		this.userDao = userDao;
-	}
-
-	public void setDiscountService(DiscountService discountService) {
-		this.discountService = discountService;
-	}
-	
-	public double calculatePriceOfTicket(double eventRaitinPrice, int amountOfSeats, int amountOfVipSeats, byte discount) {
-		double seatWithDiscount = 0.0;
-		if(discount!=0) {
-			if(amountOfVipSeats>0 ) {
-				--amountOfVipSeats;
-			}else {
-				--amountOfSeats;
-			}
-			double discountApplied = eventRaitinPrice - (eventRaitinPrice * ( discount * 0.01));
-			seatWithDiscount = discountApplied;
 		}
-		double vipPrice = (eventRaitinPrice * amountOfVipSeats)*2;
-		double normalPrice = (eventRaitinPrice * (amountOfSeats - amountOfVipSeats));
-		return vipPrice+normalPrice+seatWithDiscount;
+	}
+
+	public double calculatePriceOf1Ticket(double eventRaitingPrice, boolean isVIP, byte discount) {
+		double priceWithDiscount = eventRaitingPrice - (eventRaitingPrice * ( discount * 0.01));
+		if(isVIP) {
+			return priceWithDiscount*2;
+		}else {
+			return priceWithDiscount;
+		}
 	}
 }

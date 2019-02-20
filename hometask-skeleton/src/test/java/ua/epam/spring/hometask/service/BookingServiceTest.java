@@ -80,7 +80,7 @@ public class BookingServiceTest {
 	}
 	
 	@Test
-	public void testGetTicketsPriceNormal() {
+	public void testGetTicketsPriceNormal() throws TicketValidationException {
 		User u1 = new User();
 		u1.setId(1l);
 		List<User> users = new ArrayList<User>(List.of(u1));
@@ -90,19 +90,81 @@ public class BookingServiceTest {
 		event.setRating(EventRating.LOW);
 		event.setBasePrice(5.0);
 		
-		tickets= new HashSet<>();
-		Ticket t1 = new Ticket(u1,event,now,1l);
-		tickets.add(t1);
 		Set<Long> seats = new HashSet<>();
 		seats.add(1l);
 		seats.add(2l);
 		
 		double ret = systemUnderTest.getTicketsPrice(event,now,u1,seats);
 		assertTrue(ret == 10.0 );
+		assertTrue(u1.getTickets().iterator().next().getPrice()==5.00);
 	}
 	
 	@Test
-	public void testGetTicketsPriceNormalHigh() {
+	public void testGetTicketsPriceVIP() throws TicketValidationException {
+		User u1 = new User();
+		u1.setId(1l);
+		List<User> users = new ArrayList<User>(List.of(u1));
+		when(userDao.getAll()).thenReturn(users);
+		when(userDao.getById(u1.getId())).thenReturn(u1);
+
+		event.setRating(EventRating.LOW);
+		event.setBasePrice(5.0);
+		
+		Set<Long> seats = new HashSet<>();
+		seats.add(4l);
+		seats.add(5l);
+		
+		double ret = systemUnderTest.getTicketsPrice(event,now,u1,seats);
+		assertTrue(ret == 20.0 );
+		assertTrue(u1.getTickets().iterator().next().getPrice()==10.00);
+	}
+	
+	@Test
+	public void testGetTicketsPriceBday() throws TicketValidationException {
+		User u1 = new User();
+		u1.setId(1l);
+		List<User> users = new ArrayList<User>(List.of(u1));
+		when(userDao.getAll()).thenReturn(users);
+		when(userDao.getById(u1.getId())).thenReturn(u1);
+		u1.setBirthday(now);
+		
+		event.setRating(EventRating.LOW);
+		event.setBasePrice(5.0);
+		
+		Set<Long> seats = new HashSet<>();
+		seats.add(1l);
+		seats.add(2l);
+		when(discountService.getDiscount(u1, event, now, 2)).thenReturn((byte) 5);		
+		
+		double ret = systemUnderTest.getTicketsPrice(event,now,u1,seats);
+		assertTrue(ret == 9.75 );
+		assertTrue(u1.getTickets().iterator().next().getPrice()==4.75);
+	}
+	
+	@Test
+	public void testGetTicketsPriceTenthTicket() throws TicketValidationException {
+		User u1 = new User();
+		u1.setId(1l);
+		List<User> users = new ArrayList<User>(List.of(u1));
+		when(userDao.getAll()).thenReturn(users);
+		when(userDao.getById(u1.getId())).thenReturn(u1);
+		u1.setBirthday(now);
+		
+		event.setRating(EventRating.LOW);
+		event.setBasePrice(5.0);
+		
+		Set<Long> seats = new HashSet<>();
+		seats.add(1l);
+		seats.add(2l);
+		when(discountService.getDiscount(u1, event, now, 2)).thenReturn((byte) 50);		
+		
+		double ret = systemUnderTest.getTicketsPrice(event,now,u1,seats);
+		assertTrue(ret == 7.50 );
+		assertTrue(u1.getTickets().iterator().next().getPrice()==2.50);
+	}
+	
+	@Test
+	public void testGetTicketsPriceNormalHigh() throws TicketValidationException {
 		User u1 = new User();
 		u1.setId(1l);
 		List<User> users = new ArrayList<User>(List.of(u1));
@@ -112,96 +174,14 @@ public class BookingServiceTest {
 		event.setRating(EventRating.HIGH);
 		event.setBasePrice(5.0);
 		
-		tickets= new HashSet<>();
-		Ticket t1 = new Ticket(u1,event,now,1l);
-		tickets.add(t1);
 		Set<Long> seats = new HashSet<>();
 		seats.add(1l);
 		seats.add(2l);
 		
 		double ret = systemUnderTest.getTicketsPrice(event,now,u1,seats);
 		assertTrue(ret == 12.0 );
+		assertTrue(u1.getTickets().iterator().next().getPrice()==6.00);
 		
-	}
-	
-	
-	@Test
-	public void testBookTickets() throws TicketValidationException {
-		User u1 = new User();
-		u1.setId(1l);
-		List<User> users = new ArrayList<User>(List.of(u1));
-		when(userDao.getAll()).thenReturn(users);
-		when(userDao.getById(u1.getId())).thenReturn(u1);
-		tickets= new HashSet<>();
-		Ticket t1 = new Ticket(u1,event,now,1l);
-		tickets.add(t1);
-		when(ticketDao.getAllTickets()).thenReturn(tickets);
-		
-		systemUnderTest.bookTickets(tickets);
-		
-		assertTrue(u1.getTickets().contains(t1));
-	}
-	
-	
-	@Test
-	public void testCalculatePriceOfTicket() {
-		double normalPrice = 5.0;
-		int amountOfSeats = 3;
-		int vipSeats=1;
-		byte discount = 0;
-		
-		double ret = systemUnderTest.calculatePriceOfTicket(normalPrice, amountOfSeats, vipSeats, discount);
-		
-		assertTrue(ret == 20.0);
-	}
-	
-	@Test
-	public void testCalculatePriceOfTicketAllVIP() {
-		double normalPrice = 5.0;
-		int amountOfSeats = 3;
-		int vipSeats=3;
-		byte discount = 0;
-		
-		double ret = systemUnderTest.calculatePriceOfTicket(normalPrice, amountOfSeats, vipSeats, discount);
-		
-		assertTrue(ret == 30.0);
-	}
-	
-	@Test
-	public void testCalculatePriceOfTicketAllNormal() {
-		double normalPrice = 5.0;
-		int amountOfSeats = 3;
-		int vipSeats=0;
-		byte discount = 0;
-		
-		double ret = systemUnderTest.calculatePriceOfTicket(normalPrice, amountOfSeats, vipSeats, discount);
-		
-		assertTrue(ret == 15.0);
-	}
-
-	
-	@Test
-	public void testCalculatePriceOfTicketBdayDiscount() {
-		double normalPrice = 5.0;
-		int amountOfSeats = 3;
-		int vipSeats=0;
-		byte discount = 5;
-		
-		double ret = systemUnderTest.calculatePriceOfTicket(normalPrice, amountOfSeats, vipSeats, discount);
-		
-		assertTrue(ret == 14.75);
-	}
-	
-	@Test
-	public void testCalculatePriceOfTicketTenDiscount() {
-		double normalPrice = 5.0;
-		int amountOfSeats = 3;
-		int vipSeats=0;
-		byte discount = 50;
-		
-		double ret = systemUnderTest.calculatePriceOfTicket(normalPrice, amountOfSeats, vipSeats, discount);
-		
-		assertTrue(ret == 12.5);
 	}
 	
 	@Test
@@ -235,7 +215,6 @@ public class BookingServiceTest {
 		Set<Ticket> purchasedTickets =systemUnderTest.getPurchasedTicketsForEvent(event, now);
 		
 		assertTrue(purchasedTickets.isEmpty());
-		assertTrue(t1.getPrice()!= 0.0);
 		assertFalse(purchasedTickets.contains(t1));
 	}
 

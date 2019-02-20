@@ -30,9 +30,10 @@ public interface BookingService {
      * @param seats
      *            Set of seat numbers that user wants to buy
      * @return total price
+     * @throws TicketValidationException 
      */
     public double getTicketsPrice(@Nonnull Event event, @Nonnull LocalDateTime dateTime, @Nullable User user,
-            @Nonnull Set<Long> seats);
+            @Nonnull Set<Long> seats) throws TicketValidationException;
 
     /**
      * Books tickets in internal system. If user is not
