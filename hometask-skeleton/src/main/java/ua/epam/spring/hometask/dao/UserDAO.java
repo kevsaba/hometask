@@ -15,8 +15,7 @@ public class UserDAO {
 	UserJDBCTemplate userJDBCTemplate;
 
 	public User save(User user) {
-		userJDBCTemplate.save(user);
-		return user;
+		return userJDBCTemplate.save(user);
 	}
 
 	public void remove(User user) {

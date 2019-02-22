@@ -1,12 +1,19 @@
 package ua.epam.spring.hometask.dao.jdbctemplate;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
+import ua.epam.spring.hometask.dao.jdbctemplate.rowmapper.UserRowMapper;
 import ua.epam.spring.hometask.domain.User;
 
 public class UserJDBCTemplate {
@@ -19,10 +26,24 @@ public class UserJDBCTemplate {
 		this.jdbcTemplateObject = new JdbcTemplate(dataSource);
 	}
 
-	public void save(User user) {
+	public User save(User user) {
 		String SQL = "insert into user (FirstName,LastName,Email,Birthday) values (?, ?, ?, ?)";
-		jdbcTemplateObject.update(SQL, user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
-		System.out.println("User created");
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplateObject.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement ps = connection.prepareStatement(SQL, new String[] { "FirstName", "LastName", "Email", "Birthday" });
+				ps.setString(1, user.getFirstName());
+				ps.setString(2, user.getLastName());
+				ps.setString(3, user.getEmail());
+				ps.setDate(4, java.sql.Date.valueOf(user.getBirthday().toLocalDate()));
+				return ps;
+			}
+		}, keyHolder);
+
+		user.setId(keyHolder.getKey().longValue());
+		return user;
 	}
 
 	public void remove(User user) {

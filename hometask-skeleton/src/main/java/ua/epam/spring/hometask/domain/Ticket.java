@@ -67,6 +67,10 @@ public class Ticket extends DomainObject implements Comparable<Ticket> {
 		this.isLuckyTicket = true;
 	}
 
+	public boolean getIsLuckyTicket() {
+		return this.isLuckyTicket;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(dateTime, event, seat);

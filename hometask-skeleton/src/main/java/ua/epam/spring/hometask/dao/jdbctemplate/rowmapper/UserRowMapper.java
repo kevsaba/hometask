@@ -1,4 +1,4 @@
-package ua.epam.spring.hometask.dao.jdbctemplate;
+package ua.epam.spring.hometask.dao.jdbctemplate.rowmapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

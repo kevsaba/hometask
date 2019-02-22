@@ -31,11 +31,11 @@ public class Application {
 	@Autowired
 	UserService userServiceImpl;
 	@Autowired
-	EventService eventService;
+	EventService eventServiceImpl;
 	@Autowired
-	AuditoriumService auditoriumService;
+	AuditoriumService auditoriumServiceImpl;
 	@Autowired
-	BookingService bookingService;
+	BookingService bookingServiceImpl;
 	@Autowired
 	UserJDBCTemplate userJDBCTemplate;
 
@@ -48,21 +48,21 @@ public class Application {
 		u1.setLastName("last");
 		u1.setEmail("email1");
 		u1.setBirthday(localDateTime1);
-		userServiceImpl.save(u1);
+		u1 = userServiceImpl.save(u1);
 
 		User u2 = new User();
 		u2.setFirstName("k2");
 		u2.setLastName("last2");
 		u2.setEmail("email2");
 		u2.setBirthday(localDateTime1);
-		userServiceImpl.save(u2);
+		u2 = userServiceImpl.save(u2);
 
 		User u3 = new User();
 		u3.setFirstName("k3");
 		u3.setLastName("last3");
 		u3.setEmail("email3");
 		u3.setBirthday(localDateTime1);
-
+		u3 = userServiceImpl.save(u3);
 		// System.out.println("++++++++++++++++++++++++++++++++++" +
 		// userServiceImpl.getUserByEmail("email1").getFirstName());
 
@@ -75,10 +75,10 @@ public class Application {
 		airDates.add(LocalDateTime.of(LocalDate.of(2019, Month.JANUARY, 4), LocalTime.of(12, 10)));
 		e1.setAirDates(airDates);
 		e1.setBasePrice(5.0);
-		e1.assignAuditorium(localDateTime1, auditoriumService.getByName("auditorium1"));
+		e1.assignAuditorium(localDateTime1, auditoriumServiceImpl.getByName("auditorium1"));
 
-		eventService.save(e1);
-		eventService.getForDateRange(LocalDate.of(2019, Month.JANUARY, 2), LocalDate.of(2019, Month.JANUARY, 4));
+		e1 = eventServiceImpl.save(e1);
+		eventServiceImpl.getForDateRange(LocalDate.of(2019, Month.JANUARY, 2), LocalDate.of(2019, Month.JANUARY, 4));
 
 		// System.out.println("+++++++EVENT ID+++++++++++++++++++++++++++" +
 		// eventService.getByName("e1").getId());
@@ -92,11 +92,11 @@ public class Application {
 		tickets.add(ticket);
 		tickets.add(ticket2);
 		try {
-			bookingService.bookTickets(tickets);
+			bookingServiceImpl.bookTickets(tickets);
 		} catch (TicketValidationException e) {
 			System.out.println("Error happened while booking tickets: " + e.getMessage());
 		}
-		bookingService.getPurchasedTicketsForEvent(e1, localDateTime1);
+		bookingServiceImpl.getPurchasedTicketsForEvent(e1, localDateTime1);
 
 		Set<Long> seats = new HashSet<>();
 		seats.add(4l);

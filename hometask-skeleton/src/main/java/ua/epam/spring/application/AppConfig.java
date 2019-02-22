@@ -17,6 +17,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import ua.epam.spring.hometask.dao.jdbctemplate.AirDateJDBCTemplate;
+import ua.epam.spring.hometask.dao.jdbctemplate.AuditoriumJDBCTemplate;
+import ua.epam.spring.hometask.dao.jdbctemplate.EventJDBCTemplate;
 import ua.epam.spring.hometask.dao.jdbctemplate.TicketJDBCTemplate;
 import ua.epam.spring.hometask.dao.jdbctemplate.UserJDBCTemplate;
 import ua.epam.spring.hometask.domain.Auditorium;
@@ -84,8 +87,7 @@ public class AppConfig {
 
 	@Bean
 	public AuditoriumService getAuditoriumService() {
-		Set<Auditorium> auditoriums = new HashSet<>(
-				Arrays.asList(getAuditorium1(), getAuditorium2(), getAuditorium3(), getAuditorium4()));
+		Set<Auditorium> auditoriums = new HashSet<>(Arrays.asList(getAuditorium1(), getAuditorium2(), getAuditorium3(), getAuditorium4()));
 		return new AuditoriumServiceImpl(auditoriums);
 	}
 
@@ -120,4 +122,20 @@ public class AppConfig {
 	public TicketJDBCTemplate getTicketJDBCTemplate() {
 		return new TicketJDBCTemplate(mysqlDataSource());
 	}
+
+	@Bean
+	public EventJDBCTemplate getEventJDBCTemplate() {
+		return new EventJDBCTemplate(mysqlDataSource());
+	}
+
+	@Bean
+	public AuditoriumJDBCTemplate getAuditoriumJDBCTemplate() {
+		return new AuditoriumJDBCTemplate(mysqlDataSource());
+	}
+
+	@Bean
+	public AirDateJDBCTemplate getAirDateJDBCTemplate() {
+		return new AirDateJDBCTemplate(mysqlDataSource());
+	}
+
 }

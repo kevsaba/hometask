@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import ua.epam.spring.hometask.dao.jdbctemplate.rowmapper.TicketRowMapper;
 import ua.epam.spring.hometask.domain.Ticket;
 
 public class TicketJDBCTemplate {
@@ -25,9 +26,8 @@ public class TicketJDBCTemplate {
 	}
 
 	public void save(Ticket ticket) {
-		String SQL = "insert into ticket (DateTime,Seat,Price,EventId,UserId) values (?, ?, ?, ?, ?)";
-		jdbcTemplateObject.update(SQL, ticket.getDateTime(), ticket.getSeat(), ticket.getPrice(),
-				ticket.getEvent().getId(), ticket.getUser().getId());
+		String SQL = "insert into ticket (DateTime,Seat,Price,EventId,UserId,IsLuckyTicket) values (?, ?, ?, ?, ?, ?)";
+		jdbcTemplateObject.update(SQL, ticket.getDateTime(), ticket.getSeat(), ticket.getPrice(), ticket.getEvent().getId(), ticket.getUser().getId(), ticket.getIsLuckyTicket());
 		System.out.println("Ticket created");
 	}
 
