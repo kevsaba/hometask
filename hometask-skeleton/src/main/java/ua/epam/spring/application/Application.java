@@ -41,6 +41,9 @@ public class Application {
 
 	@PostConstruct
 	public void start() {
+		/*
+		 * In the file start.sql there is the creation of the tables and auditoriums
+		 */
 		LocalDateTime localDateTime1 = LocalDateTime.of(LocalDate.of(2019, Month.JANUARY, 1), LocalTime.of(12, 10));
 
 		User u1 = new User();
